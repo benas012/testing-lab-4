@@ -1,4 +1,4 @@
-package lab_4;
+
 
 import org.junit.*;
 import org.openqa.selenium.By;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-public class lab_4 {
+public class lab_4Test {
     
     public static ChromeDriver driver;
     private static final String email = "TestUser" + generateRandomString(10) + "@gmail.com";

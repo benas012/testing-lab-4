@@ -1,4 +1,4 @@
-
+package lab_4;
 
 import org.junit.*;
 import org.openqa.selenium.By;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-public class lab_4 {
+public class lab_4Test {
     
     public static ChromeDriver driver;
     private static final String email = "TestUser" + generateRandomString(10) + "@gmail.com";
@@ -45,6 +45,7 @@ public class lab_4 {
     @Before
     public void before() {
         driver = new ChromeDriver();
+        driver.manage().window().maximize();
     }
     
     @After
@@ -60,7 +61,7 @@ public class lab_4 {
     @Test
     public void test1() throws InterruptedException {
         driver.get("https://demowebshop.tricentis.com/");
-        driver.manage().window().maximize();
+        
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
         wait.pollingEvery(Duration.ofMillis(500));
         String value = logic(driver, "data1.txt", wait, true);
