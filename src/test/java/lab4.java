@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-public class lab_4Test {
+public class lab4 {
     
     public static ChromeDriver driver;
     private static final String email = "TestUser" + generateRandomString(10) + "@gmail.com";
