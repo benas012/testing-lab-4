@@ -63,35 +63,7 @@ public class lab_4 {
         driver.manage().window().maximize();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
         wait.pollingEvery(Duration.ofMillis(500));
-        driver.findElement(By.xpath("//*[@class='ico-login']")).click();
-        driver.findElement(By.id("Email")).sendKeys(email);
-        driver.findElement(By.id("Password")).sendKeys(password);
-        driver.findElement(By.xpath("//input[@value='Log in']")).click();
-        driver.findElement(By.xpath("//ul[@class='top-menu']//a[@href='/digital-downloads']")).click();
-        ArrayList<String> products = ReadFile("data1.txt");
-        for (String product : products) {
-            driver.findElement(By.xpath("//*[contains(text(),\""+product+"\")]/ancestor::div[contains(@class, 'details')]//input[@value='Add to cart']")).click();
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='bar-notification success']")));
-        }
-        driver.findElement(By.xpath("//span[text()='Shopping cart']")).click();
-        driver.findElement(By.id("termsofservice")).click();
-        driver.findElement(By.id("checkout")).click();
-        driver.findElement(By.id("BillingNewAddress_CountryId")).click();
-        driver.findElement(By.xpath("//option[contains(text(),'United Kingdom')]")).click();
-        driver.findElement(By.id("BillingNewAddress_City")).sendKeys("London");
-        driver.findElement(By.id("BillingNewAddress_Address1")).sendKeys("Baker Street 221B");
-        driver.findElement(By.id("BillingNewAddress_ZipPostalCode")).sendKeys("123");
-        driver.findElement(By.id("BillingNewAddress_PhoneNumber")).sendKeys("1234567890");
-        driver.findElement(By.xpath("//*[@title='Continue']")).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@class='button-1 payment-method-next-step-button']")));
-        driver.findElement(By.xpath("//input[@class='button-1 payment-method-next-step-button']")).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@class='button-1 payment-info-next-step-button']")));
-        driver.findElement(By.xpath("//input[@class='button-1 payment-info-next-step-button']")).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@class='button-1 confirm-order-next-step-button']")));
-        driver.findElement(By.xpath("//input[@class='button-1 confirm-order-next-step-button']")).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//strong[contains(text(),'Your order has been successfully processed!')]")));
-        WebElement confirmation = driver.findElement(By.xpath("//strong[contains(text(),'Your order has been successfully processed!')]"));
-        String value = confirmation.getText();
+        String value = logic(driver, "data1.txt", wait, true);
         Assert.assertEquals(value, "Your order has been successfully processed!");
     }
     
@@ -101,12 +73,20 @@ public class lab_4 {
         driver.manage().window().maximize();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
         wait.pollingEvery(Duration.ofMillis(1000));
-        driver.findElement(By.xpath("//*[@class='ico-login']")).click();
+        String value = logic(driver, "data2.txt", wait, false);
+        Assert.assertEquals(value, "Your order has been successfully processed!");
+    }
+    
+    
+    
+    //Utility functions
+    public String logic(ChromeDriver driver, String productsFileName, WebDriverWait wait, Boolean fillInBillingDetails) {
+    	driver.findElement(By.xpath("//*[@class='ico-login']")).click();
         driver.findElement(By.id("Email")).sendKeys(email);
         driver.findElement(By.id("Password")).sendKeys(password);
         driver.findElement(By.xpath("//input[@value='Log in']")).click();
         driver.findElement(By.xpath("//ul[@class='top-menu']//a[@href='/digital-downloads']")).click();
-        ArrayList<String> products = ReadFile("data2.txt");
+        ArrayList<String> products = ReadFile(productsFileName);
         for (String product : products) {
             driver.findElement(By.xpath("//*[contains(text(),\""+product+"\")]/ancestor::div[contains(@class, 'details')]//input[@value='Add to cart']")).click();
             wait.until(ExpectedConditions.attributeToBe(By.className("ajax-loading-block-window"), "style", "display: none;"));
@@ -114,6 +94,14 @@ public class lab_4 {
         driver.findElement(By.xpath("//span[text()='Shopping cart']")).click();
         driver.findElement(By.id("termsofservice")).click();
         driver.findElement(By.id("checkout")).click();
+        if(fillInBillingDetails) {
+        	driver.findElement(By.id("BillingNewAddress_CountryId")).click();
+            driver.findElement(By.xpath("//option[contains(text(),'United Kingdom')]")).click();
+            driver.findElement(By.id("BillingNewAddress_City")).sendKeys("London");
+            driver.findElement(By.id("BillingNewAddress_Address1")).sendKeys("Baker Street 221B");
+            driver.findElement(By.id("BillingNewAddress_ZipPostalCode")).sendKeys("123");
+            driver.findElement(By.id("BillingNewAddress_PhoneNumber")).sendKeys("1234567890");
+        }
         driver.findElement(By.xpath("//*[@title='Continue']")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@class='button-1 payment-method-next-step-button']")));
         driver.findElement(By.xpath("//input[@class='button-1 payment-method-next-step-button']")).click();
@@ -123,13 +111,9 @@ public class lab_4 {
         driver.findElement(By.xpath("//input[@class='button-1 confirm-order-next-step-button']")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//strong[contains(text(),'Your order has been successfully processed!')]")));
         WebElement confirmation = driver.findElement(By.xpath("//strong[contains(text(),'Your order has been successfully processed!')]"));
-        String value = confirmation.getText();
-        Assert.assertEquals(value, "Your order has been successfully processed!");
+        return confirmation.getText();
     }
     
-    
-    
-    //Utility functions
     public static String generateRandomString(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder stringBuilder = new StringBuilder();
